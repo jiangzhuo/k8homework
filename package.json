@@ -1,0 +1,20 @@
+{
+  "name": "lilith",
+  "version": "0.0.1",
+  "description": "lilith spread seed",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^3.9.3"
+  },
+  "devDependencies":{
+    "tap":"*"
+  }
+}
