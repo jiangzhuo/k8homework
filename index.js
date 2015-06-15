@@ -4,7 +4,7 @@ var _ = require('lodash');
 var whatItem = function (grandType) {
     switch (grandType) {
         case 0:
-            return null;
+            return 0;
             break;
         case 1:
             return 'A';
@@ -38,9 +38,7 @@ var whatItem = function (grandType) {
     }
 };
 
-var whatLevel = function (grandType, col, row) {
-    var mapResult = this.result[grandType];
-    // +1 for box board
+var whatLevel = function (mapResult, col, row) {
     var dis = mapResult.disMap[col + 1][row + 1];
     if (dis == 1 && dis == Number.MIN_VALUE && dis == Number.MAX_VALUE) {
         return 1;
@@ -53,7 +51,6 @@ var Lilith = function (mapData) {
     //init indexMap
     var initMap = function (height, width) {
         var map = [];
-
         for (var row = 0; row < height; row++) {
             var rowIndex = [];
             map.push(rowIndex);
@@ -83,6 +80,7 @@ var Lilith = function (mapData) {
     var foregroundColors = [1, 2, 3, 4, 5, 6];
     var backgroundColor = 0;
     this.result = [];
+    this.mapData = mapData;
 
     for (var colorIndex in foregroundColors) {
 
@@ -202,7 +200,30 @@ module.exports = Lilith;
 
 var pro = Lilith.prototype;
 
-pro.generate = function () {
-    // todo
-    return 1;
+pro.generate = function (count) {
+    var N = this.mapData.width * this.mapData.height;
+    var item = [];
+    for (var row = 0; row < this.mapData.height; row++) {
+        var rowIndex = [];
+        item.push(rowIndex);
+        for (var col = 0; col < this.mapData.width; col++) {
+            item[row][col] = 0;
+        }
+    }
+    if (count <= 0 || count > N) {
+        return new Error('count out of range [1,%s]', N);
+    } else {
+        var range = Array.apply(null, {length: N}).map(Number.call, Number);
+        range = _.takeRight(_.shuffle(range), count);
+        for (var i in range) {
+            var row = parseInt(range[i] / this.mapData.width);
+            var col = parseInt(range[i] % this.mapData.width);
+            var itemType = whatItem(this.mapData.map[row][col]);
+            if (itemType != 0) {
+                item[row][col] = itemType + whatLevel(this.result[this.mapData.map[row][col]], row, col);
+            }
+        }
+        console.log(item.toString());
+        return item;
+    }
 };
